@@ -1,12 +1,21 @@
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Raylib_cs;
 using static Raylib_cs.Raylib;
 
-internal static class Program
+internal static unsafe class Program
 {
     private static void Main()
     {
         SetTraceLogLevel(TraceLogLevel.Error);
+
+        InitAudioDevice();
+        SetAudioStreamBufferSizeDefault(512);
+        var audioStream = LoadAudioStream(48000, 32, 2);
+        SetAudioStreamCallback(audioStream, &Callback);
+        PlayAudioStream(audioStream);
+
         SetConfigFlags(ConfigFlags.TransparentWindow);
         InitWindow(360, 460, "Bebismr");
         SetExitKey(KeyboardKey.Null);
@@ -38,8 +47,17 @@ internal static class Program
             EndDrawing();
         }
 
+        UnloadAudioStream(audioStream);
+        CloseAudioDevice();
+
         UnloadTexture(bebisTex);
 
         CloseWindow();
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static void Callback(void* data, uint frames)
+    {
+        Mixer.Render((float*)data, (int)frames);
     }
 }
