@@ -6,8 +6,10 @@ using static Raylib_cs.Raylib;
 
 internal static unsafe class Program
 {
-    private static void Main()
+    private static void Main(string[] args)
     {
+        var headless = args.Contains("-d");
+
         SetTraceLogLevel(TraceLogLevel.Error);
 
         InitAudioDevice();
@@ -16,41 +18,70 @@ internal static unsafe class Program
         SetAudioStreamCallback(audioStream, &Callback);
         PlayAudioStream(audioStream);
 
-        SetConfigFlags(ConfigFlags.TransparentWindow);
-        InitWindow(360, 460, "Bebismr");
-        SetExitKey(KeyboardKey.Null);
-        SetTargetFPS(30);
-
-        var bebisTex = LoadTexture("assets/bebis.png");
-
-        while (!WindowShouldClose())
+        if (headless)
         {
-            BeginDrawing();
-            ClearBackground(new Color(10, 10, 0, 240));
+            var done = new ManualResetEventSlim();
 
-            var center = GetScreenCenter();
-
-            var scale  = 250f            / MathF.Max(bebisTex.Width, bebisTex.Height);
-            var width  = bebisTex.Width  * scale;
-            var height = bebisTex.Height * scale;
-
-            DrawTexturePro
+            using var s1 = PosixSignalRegistration.Create
             (
-                bebisTex,
-                new Rectangle(0,        0,        bebisTex.Width, bebisTex.Height),
-                new Rectangle(center.X, center.Y, width,          height),
-                new Vector2(width * .5f, height * .5f),
-                0,
-                Color.White
+                PosixSignal.SIGINT,
+                c =>
+                {
+                    c.Cancel = true;
+                    done.Set();
+                }
             );
 
-            EndDrawing();
+            using var s2 = PosixSignalRegistration.Create
+            (
+                PosixSignal.SIGTERM,
+                c =>
+                {
+                    c.Cancel = true;
+                    done.Set();
+                }
+            );
+
+            done.Wait();
+        }
+        else
+        {
+            SetConfigFlags(ConfigFlags.TransparentWindow);
+            InitWindow(360, 460, "Bebismr");
+            SetExitKey(KeyboardKey.Null);
+            SetTargetFPS(30);
+
+            var bebisTex = LoadTexture("assets/bebis.png");
+
+            while (!WindowShouldClose())
+            {
+                BeginDrawing();
+                ClearBackground(new Color(10, 10, 0, 240));
+
+                var center = GetScreenCenter();
+
+                var scale  = 250f            / MathF.Max(bebisTex.Width, bebisTex.Height);
+                var width  = bebisTex.Width  * scale;
+                var height = bebisTex.Height * scale;
+
+                DrawTexturePro
+                (
+                    bebisTex,
+                    new Rectangle(0,        0,        bebisTex.Width, bebisTex.Height),
+                    new Rectangle(center.X, center.Y, width,          height),
+                    new Vector2(width * .5f, height * .5f),
+                    0,
+                    Color.White
+                );
+
+                EndDrawing();
+            }
+
+            UnloadTexture(bebisTex);
         }
 
         UnloadAudioStream(audioStream);
         CloseAudioDevice();
-
-        UnloadTexture(bebisTex);
 
         CloseWindow();
     }
