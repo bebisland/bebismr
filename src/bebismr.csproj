@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>true</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<PublishAot>true</PublishAot>
+		<OptimizationPreference>Size</OptimizationPreference>
+		<StripSymbols>true</StripSymbols>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<UseSystemResourceKeys>true</UseSystemResourceKeys>
+		<IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+		<EventSourceSupport>false</EventSourceSupport>
+		<DebuggerSupport>false</DebuggerSupport>
+		<MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+		<ServerGarbageCollector>false</ServerGarbageCollector>
+		<ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+		<TieredPGO>false</TieredPGO>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Raylib-cs" Version="8.1.0"/>
+		<PackageReference Include="rlImgui-cs" Version="3.2.0"/>
+		<RuntimeHostConfigurationOption Include="System.GC.ConserveMemory" Value="9"/>
+		<RuntimeHostConfigurationOption Include="System.GC.RetainVM" Value="false"/>
+	</ItemGroup>
+
+	<PropertyGroup>
+		<AppName>bebismr</AppName>
+		<AppVersion>0.0.1</AppVersion>
+		<AppRepo>https://github.com/bebisland/$(AppName)</AppRepo>
+		<AssemblyName>$(AppName)</AssemblyName>
+		<RootNamespace>$(AppName)</RootNamespace>
+		<Product>$(AppName)</Product>
+		<Title>$(AppName)</Title>
+		<Description>Bebis Terminal</Description>
+		<Company>bebisland</Company>
+		<Authors>Furkan Kerim Karademir</Authors>
+		<Copyright>Copyright (c) 2026 Bebisland</Copyright>
+		<NeutralLanguage>en</NeutralLanguage>
+		<Version>$(AppVersion)</Version>
+		<AssemblyVersion>$(AppVersion).0</AssemblyVersion>
+		<FileVersion>$(AppVersion).0</FileVersion>
+		<InformationalVersion>$(AppVersion)</InformationalVersion>
+		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+		<RepositoryUrl>$(AppRepo)</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageProjectUrl>$(AppRepo)</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageTags>$(AppName);bebis;terminal;terminal-emulators</PackageTags>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Deterministic>true</Deterministic>
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+	</PropertyGroup>
+
+</Project>
