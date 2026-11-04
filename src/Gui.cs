@@ -19,7 +19,7 @@ internal static unsafe class Gui
     public static void Start()
     {
         SetConfigFlags(TransparentWindow | VSyncHint | ResizableWindow);
-        InitWindow(360, 460, "🍪 Bebis");
+        InitWindow(Config.Instance.Window.SizeX, Config.Instance.Window.SizeY, "🍪 Bebis");
         SetExitKey(KeyboardKey.Null);
         SetTargetFPS(60);
         rlImGui.Setup();
@@ -44,10 +44,15 @@ internal static unsafe class Gui
 
         var showSettings = false;
 
+        var bg = Config.Instance.Render.Background.Split(',');
+
+        var background = new Color
+            (byte.Parse(bg[0].Trim()), byte.Parse(bg[1].Trim()), byte.Parse(bg[2].Trim()), byte.Parse(bg[3].Trim()));
+
         while (!WindowShouldClose())
         {
             BeginDrawing();
-            ClearBackground(new Color(10, 10, 0, 240));
+            ClearBackground(background);
 
             if (rainFrames > 0 && (rainTimer += GetFrameTime()) >= .05f)
             {
@@ -65,7 +70,8 @@ internal static unsafe class Gui
                     new Rectangle(0, 0, GetScreenWidth(),  GetScreenHeight()),
                     Vector2.Zero,
                     0,
-                    new Color(255, 255, 255, (int)(Math.Clamp(Mixer.RainVolume * 0.25f, 0f, 1f) * 255f))
+                    new Color
+                        (255, 255, 255, (int)(Math.Clamp(Config.Instance.Volume.Rain / 100f * 0.25f, 0f, 1f) * 255f))
                 );
 
             var center = GetScreenCenter();
@@ -150,24 +156,28 @@ internal static unsafe class Gui
 
                         var ratio = i switch
                         {
-                            0 => Mixer.KeyVolume,
-                            1 => Mixer.ClickVolume,
-                            _ => Mixer.RainVolume
+                            0 => Config.Instance.Volume.Keyboard / 100f,
+                            1 => Config.Instance.Volume.Mouse    / 100f,
+                            _ => Config.Instance.Volume.Rain     / 100f
                         };
 
                         if (VolumeSlider(i, ratio, out var value))
+                        {
+                            var val = (int)MathF.Ceiling(value * 100);
+
                             switch (i)
                             {
                                 case 0:
-                                    Mixer.KeyVolume = value;
+                                    Config.Instance.Volume.Keyboard = val;
                                     break;
                                 case 1:
-                                    Mixer.ClickVolume = value;
+                                    Config.Instance.Volume.Mouse = val;
                                     break;
                                 default:
-                                    Mixer.RainVolume = value;
+                                    Config.Instance.Volume.Rain = val;
                                     break;
                             }
+                        }
                     }
 
                     PopItemWidth();
@@ -179,6 +189,8 @@ internal static unsafe class Gui
 
             EndDrawing();
         }
+
+        Config.Save();
 
         UnloadTexture(bebisTex);
         UnloadTexture(rainTexture);

@@ -2,11 +2,11 @@ using System.Runtime.InteropServices;
 
 internal static unsafe partial class Native
 {
-    private static string _home = "/tmp";
+    public static string Home = "/tmp";
 
     public static void DropPrivileges()
     {
-        _home = Environment.GetEnvironmentVariable("HOME") ?? "/tmp";
+        Home = Environment.GetEnvironmentVariable("HOME") ?? "/tmp";
 
         var sudoUid = Environment.GetEnvironmentVariable("SUDO_UID");
 
@@ -20,11 +20,11 @@ internal static unsafe partial class Native
         if (setgroups(0, null) != 0 || setgid(gid) != 0 || setuid(uid) != 0)
             Environment.Exit(2);
 
-        _home = HomeOf(Environment.GetEnvironmentVariable("SUDO_USER")) ?? _home;
+        Home = HomeOf(Environment.GetEnvironmentVariable("SUDO_USER")) ?? Home;
 
         var runtimeDir = $"/run/user/{uid}";
 
-        setenv("HOME",                     _home,                             1);
+        setenv("HOME",                     Home,                              1);
         setenv("XDG_RUNTIME_DIR",          runtimeDir,                        1);
         setenv("PULSE_SERVER",             $"unix:{runtimeDir}/pulse/native", 1); // PipeWire-pulse / PulseAudio
         setenv("DBUS_SESSION_BUS_ADDRESS", $"unix:path={runtimeDir}/bus",     1);
