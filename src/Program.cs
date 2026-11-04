@@ -6,17 +6,13 @@ using static Raylib_cs.Raylib;
 
 internal static unsafe class Program
 {
-    private static int Main(string[] args)
+    public static bool Quit;
+
+    private static void Main(string[] args)
     {
         var headless = args.Contains("-d");
-        var devices  = Input.OpenDevices();
 
-        if (devices.Length == 0)
-        {
-            Console.Error.WriteLine("/dev/input is not authorized. Run with privileges.");
-            return 1;
-        }
-
+        Input.Start();
         Native.DropPrivileges();
 
         SetTraceLogLevel(TraceLogLevel.Error);
@@ -89,12 +85,12 @@ internal static unsafe class Program
             UnloadTexture(bebisTex);
         }
 
+        Quit = true;
+
         UnloadAudioStream(audioStream);
         CloseAudioDevice();
 
         CloseWindow();
-
-        return 0;
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]

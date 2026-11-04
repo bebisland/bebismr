@@ -2,4 +2,7 @@
 bin/
 obj/
 *.user
+
+src/assets/packs/
+
 test.sh
