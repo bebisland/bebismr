@@ -34,6 +34,7 @@ internal static unsafe class Gui
 
         var rainImage   = LoadImageAnim("assets/rain.gif", out var rainFrames);
         var rainTexture = LoadTextureFromImage(rainImage);
+        SetTextureFilter(rainTexture, TextureFilter.Bilinear);
 
         var rainSize = rainImage.Width * rainImage.Height * 4;
 

@@ -12,7 +12,7 @@ internal static unsafe class Mixer
     static Mixer()
     {
         LoadPacks("assets/packs");
-        Rain = LoadWave48K("assets/rain.wav");
+        Rain = LoadWave48K("assets/rain.ogg");
     }
 
     public static void OnKey(ushort code, bool down)
