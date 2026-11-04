@@ -19,8 +19,9 @@ internal static unsafe class Gui
     public static void Start()
     {
         SetConfigFlags(TransparentWindow | VSyncHint | ResizableWindow);
-        InitWindow(360, 460, "Bebismr");
+        InitWindow(360, 460, "🍪 Bebis");
         SetExitKey(KeyboardKey.Null);
+        SetTargetFPS(60);
         rlImGui.Setup();
 
         GetIO().NativePtr->IniFilename = null;
@@ -31,8 +32,15 @@ internal static unsafe class Gui
         for (var i = 0; i < SettingIconFiles.Length; i++)
             SettingIconTextures[i] = LoadTexture(SettingIconFiles[i]);
 
-        var squash  = 0f;
-        var squashV = 0f;
+        var rainImage   = LoadImageAnim("assets/rain.gif", out var rainFrames);
+        var rainTexture = LoadTextureFromImage(rainImage);
+
+        var rainSize = rainImage.Width * rainImage.Height * 4;
+
+        var rainFrame = 0;
+        var rainTimer = 0f;
+        var squash    = 0f;
+        var squashV   = 0f;
 
         var showSettings = false;
 
@@ -40,6 +48,25 @@ internal static unsafe class Gui
         {
             BeginDrawing();
             ClearBackground(new Color(10, 10, 0, 240));
+
+            if (rainFrames > 0 && (rainTimer += GetFrameTime()) >= .05f)
+            {
+                rainTimer = 0f;
+                rainFrame = (rainFrame + 1) % rainFrames;
+
+                UpdateTexture(rainTexture, (byte*)rainImage.Data + rainSize * rainFrame);
+            }
+
+            if (rainFrames > 0)
+                DrawTexturePro
+                (
+                    rainTexture,
+                    new Rectangle(0, 0, rainTexture.Width, rainTexture.Height),
+                    new Rectangle(0, 0, GetScreenWidth(),  GetScreenHeight()),
+                    Vector2.Zero,
+                    0,
+                    new Color(255, 255, 255, (int)(Math.Clamp(Mixer.RainVolume * 0.25f, 0f, 1f) * 255f))
+                );
 
             var center = GetScreenCenter();
 
@@ -154,6 +181,8 @@ internal static unsafe class Gui
         }
 
         UnloadTexture(bebisTex);
+        UnloadTexture(rainTexture);
+        UnloadImage(rainImage);
 
         rlImGui.Shutdown();
         CloseWindow();
