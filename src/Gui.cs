@@ -18,7 +18,7 @@ internal static unsafe class Gui
 
     public static void Start()
     {
-        SetConfigFlags(TransparentWindow | VSyncHint);
+        SetConfigFlags(TransparentWindow | VSyncHint | ResizableWindow);
         InitWindow(360, 460, "Bebismr");
         SetExitKey(KeyboardKey.Null);
         rlImGui.Setup();
@@ -30,6 +30,9 @@ internal static unsafe class Gui
 
         for (var i = 0; i < SettingIconFiles.Length; i++)
             SettingIconTextures[i] = LoadTexture(SettingIconFiles[i]);
+
+        var squash  = 0f;
+        var squashV = 0f;
 
         var showSettings = false;
 
@@ -44,12 +47,26 @@ internal static unsafe class Gui
             var width  = bebisTex.Width  * scale;
             var height = bebisTex.Height * scale;
 
+            var bob = MathF.Sin((float)Raylib.GetTime() * 1.7f) * 3f;
+
+            var imp = Interlocked.Exchange(ref Mixer.Impulse, 0);
+
+            if (imp > 0)
+                squashV += 7f * MathF.Min(imp, 3);
+
+            squash  += squashV                          * GetFrameTime();
+            squashV += (-squash * 190f - squashV * 11f) * GetFrameTime();
+
+            var squashAmount = Math.Clamp(squash, -.75f, .75f);
+            var squashX      = 1f + squashAmount * .10f;
+            var squashY      = 1f - squashAmount * .10f;
+
             DrawTexturePro
             (
                 bebisTex,
-                new Rectangle(0,        0,        bebisTex.Width, bebisTex.Height),
-                new Rectangle(center.X, center.Y, width,          height),
-                new Vector2(width * .5f, height * .5f),
+                new Rectangle(0,        0,              bebisTex.Width,  bebisTex.Height),
+                new Rectangle(center.X, center.Y + bob, width * squashX, height * squashY),
+                new Vector2(width                             * squashX         * .5f, height * squashY * .5f),
                 0,
                 Color.White
             );

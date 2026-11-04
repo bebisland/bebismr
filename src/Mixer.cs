@@ -2,8 +2,9 @@ using static Raylib_cs.Raylib;
 
 internal static unsafe class Mixer
 {
-    private const           int      Bank        = 288;
-    private const           int      Rate        = 48000;
+    private const           int      Bank = 288;
+    private const           int      Rate = 48000;
+    public static           int      Impulse;
     public static           float    RainVolume  = 0.35f;
     public static           float    KeyVolume   = 1f;
     public static           float    ClickVolume = 1f;

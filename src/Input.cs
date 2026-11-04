@@ -73,6 +73,9 @@ internal static class Input
 
                 var down = ev.Value == 1;
                 Mixer.OnKey(code, down);
+
+                if (down)
+                    Interlocked.Increment(ref Mixer.Impulse);
             }
         }
     }
