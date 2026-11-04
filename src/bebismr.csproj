@@ -30,7 +30,7 @@
 
 	<PropertyGroup>
 		<AppName>bebismr</AppName>
-		<AppVersion>0.0.5</AppVersion>
+		<AppVersion>0.0.6</AppVersion>
 		<AppRepo>https://github.com/bebisland/$(AppName)</AppRepo>
 		<AssemblyName>$(AppName)</AssemblyName>
 		<RootNamespace>$(AppName)</RootNamespace>

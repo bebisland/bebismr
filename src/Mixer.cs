@@ -4,9 +4,9 @@ internal static unsafe class Mixer
 {
     private const           int      Bank        = 288;
     private const           int      Rate        = 48000;
-    private const           float    RainVolume  = 0.35f;
-    private const           float    KeyVolume   = 1f;
-    private const           float    ClickVolume = 1f;
+    public static           float    RainVolume  = 0.35f;
+    public static           float    KeyVolume   = 1f;
+    public static           float    ClickVolume = 1f;
     private static readonly float[]? Rain;
     private static          int      _rainPos;
     private static readonly Sound[]  Sounds = new Sound[32];
@@ -23,7 +23,7 @@ internal static unsafe class Mixer
             return;
 
         var mouse = code >= 272;
-        var vol   = mouse ? ClickVolume : KeyVolume;
+        var vol   = mouse ? ClickVolume * 5 : KeyVolume * 2;
 
         if (vol < .005f)
             return;
