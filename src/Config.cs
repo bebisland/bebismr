@@ -32,6 +32,8 @@ public class Config
         Instance.Window.SizeY = GetScreenHeight();
 
         var tomlContent = TomlSerializer.Serialize(Instance, TomlContext.Default.Config);
+
+        Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
         File.WriteAllText(FilePath, tomlContent);
     }
 
